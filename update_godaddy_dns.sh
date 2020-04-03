@@ -61,6 +61,6 @@ echo "`date '+%Y-%m-%d %H:%M:%S'` - Current External IP is $myip, GoDaddy DNS IP
 
 # Does DNS record need updating?
 if [ "$gdip" != "$myip" ]; then
-  echo "IP has changed!! Updating on GoDaddy"
+  echo "IP's differ, updating record"
   curl -s -X PUT "https://api.godaddy.com/v1/domains/${mydomain}/records/A/${myhostname}" -H "Authorization: sso-key ${gdapikey}" -H "Content-Type: application/json" -d "[{\"data\": \"${myip}\"}]"
 fi
