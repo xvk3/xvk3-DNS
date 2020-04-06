@@ -17,14 +17,14 @@ myhostname="${cfg[1]}"
 gdapikey="${cfg[2]}"
 
 # Attempt to lookup IP address
-myip=`curl -s "https://api.ipify.org"`
+myip=$(curl -s "https://api.ipify.org")
 # Alternate lookup site
-myip2=`curl -s "https://diagnostic.opendns.com/myip"`
+myip2=$(curl -s "https://diagnostic.opendns.com/myip")
 # If the results differ:
 if [[ "$myip" != "$myip2" ]]; then
   # Check if both IPs are valid
-  myip_valid=`echo $myip | grep -Po "(\d+\.?)*"`
-  myip2_valid=`echo $myip2 | grep -Po "(\d+\.?)*"`
+  myip_valid=$(echo $myip | grep -Po "(\d+\.?)*")
+  myip2_valid=$(echo $myip2 | grep -Po "(\d+\.?)*")
   # If result of the validity check is NULL:
   if [[ -z "$myip_valid" ]]; then
     # Check the alternate IP for validity
@@ -47,17 +47,17 @@ if [[ -z "$myip" ]]; then
 fi
 
 # Execute GET request on the godaddy API
-dnsdata=`curl -s -X GET -H "Authorization: sso-key ${gdapikey}" "https://api.godaddy.com/v1/domains/${mydomain}/records/A/${myhostname}"`
+dnsdata=$(curl -s -X GET -H "Authorization: sso-key ${gdapikey}" "https://api.godaddy.com/v1/domains/${mydomain}/records/A/${myhostname}")
 
 # Parse response
-tmp=`echo $dnsdata | cut -d ',' -f 1 | tr -d '"' | cut -d ":" -f 2`
-gdip=`echo $tmp | grep -Po "^(\d+\.?)*"`
+tmp=$(echo $dnsdata | cut -d ',' -f 1 | tr -d '"' | cut -d ":" -f 2)
+gdip=$(echo $tmp | grep -Po "^(\d+\.?)*")
 if [[ -z "$gdip" ]]; then
   echo "Bad GoDaddy response, check configuration file"
   exit 4
 fi
 
-echo "`date '+%Y-%m-%d %H:%M:%S'` - Current External IP is $myip, GoDaddy DNS IP is $gdip"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Current External IP is $myip, GoDaddy DNS IP is $gdip"
 
 # Does DNS record need updating?
 if [ "$gdip" != "$myip" ]; then
